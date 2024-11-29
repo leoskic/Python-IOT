@@ -7,6 +7,7 @@ class ListaObjetos:
 
     def __getitem__(self, index):
         # Buscar por index
+        
         return self.objetos[index]
 
     def __setitem__(self, index, objeto):
@@ -17,9 +18,20 @@ class ListaObjetos:
         # Cantidad de objetos lista
         return len(self.objetos)
 
-    def __str__(self):
+    # def __str__(self):
+    #    #Mostrar lista en lista
+    #     return '\n'.join([str(objeto) for objeto in self.objetos])
+    
+    """def mostList(self):
        #Mostrar lista en lista
-        return '\n'.join([str(objeto) for objeto in self.objetos])
+        return '\n'.join(str(objeto) for objeto in self.objetos)"""
+    def mostList(self):
+            # Mostrar lista enumerada
+            if not self.objetos:
+                return "No hay objetos en la lista."
+            
+            return '\n'.join(f"{i + 1}. {str(objeto)}" for i, objeto in enumerate(self.objetos))
+
 
     def agregar_objeto(self, objeto):
         # Agregar un objeto

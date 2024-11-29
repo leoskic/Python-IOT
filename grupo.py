@@ -1,28 +1,56 @@
+import json
 from alumno import Alumno
 from listaObjetos import ListaObjetos
 
 
 class Grupo(ListaObjetos):
     def __init__(self, grado=None, seccion=None, alumnos=None):
-        if grado is None and seccion is None and alumnos is None:
-            
-            self.grupos = ListaObjetos()
-            
-        else:
+ 
+            super().__init__()
+            if grado is None:
+                self.list = True
+            else:
+                self.list = False
             self.grado = grado
             self.seccion = seccion
             self.alumnos = alumnos
     
     def __str__(self):
-        if hasattr(self, 'grupos'):
-            self.grupos.__str__()
-        else: 
-            return f"{self.grado}, {self.seccion}, {self.alumnos.__str__()}"
+        if all([self.grado, self.seccion]):
+            return f"{self.grado}, {self.seccion} Alumnos: \n{self.alumnos}"
+        else:
+            return self.mostList()
+   
+    def getDictG(self):
+        if all([self.grado, self.seccion]):
+            return {
+                "grado": self.grado,
+                "seccion" : self.seccion,
+                "alumnos" : self.alumnos.getDict()
+            }
+        else:
+            return [g.getDictG() for g in self.objetos]
 
-    def get_gpo(self):
-        return f"Grado: {self.grado}, Seccion: {self.seccion}, Alumno:"
         
-        
+    def saveJson(self, filename):
+        with open(filename, 'w') as f:
+            json.dump(self.getDictG(), f, indent=4)
+            
+                
+    def loadJsonG(self, filename):
+        with open(filename, 'r') as f:
+            data = json.load(f)
+            self.toObject(data)
+
+
+    def toObject(self, data):
+            for grupo_data in data:
+                alumnos = Alumno()
+                alumnos.toObject(grupo_data['alumnos'])
+                grupo = Grupo(grupo_data['grado'], grupo_data['seccion'], alumnos)
+                self.agregar_objeto(grupo)
+
+            
 if __name__ == "__main__":
 
     alumno1 = Alumno("Javier", "Armando", "Garcia", "CURP001", "001")
@@ -32,9 +60,9 @@ if __name__ == "__main__":
     alumnolista = Alumno()
     alumnolista2 = Alumno()
     
-    alumnolista.alumnos.agregar_objeto(alumno1)
-    alumnolista.alumnos.agregar_objeto(alumno2)
-    alumnolista2.alumnos.agregar_objeto(alumno3)
+    alumnolista.agregar_objeto(alumno1)
+    alumnolista.agregar_objeto(alumno2)
+    alumnolista2.agregar_objeto(alumno3)
     
     grup1 = Grupo("5", "c", alumnolista)
     
@@ -42,12 +70,24 @@ if __name__ == "__main__":
     
     grupolista = Grupo()
     
-    grupolista.grupos.agregar_objeto(grup1)
-    grupolista.grupos.agregar_objeto(grupo2)
+    grupolista.agregar_objeto(grup1)
+    grupolista.agregar_objeto(grupo2)
     
     
-    print(grup1)
-    #print(grupolista.grupos.__str__())
+    # print(grupo2)
+    # print("////////")
+    print(alumnolista)
+    
+    #grupolista.saveJson("grupoColl.json")
+    
+    #grupocargar = Grupo()
+    #grupocargar.loadJsonG("grupoColl.json")
+    
+    #print(grupocargar)
+    
+    
+    
+    
 
 
 
